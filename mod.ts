@@ -1,6 +1,12 @@
-import { serve } from "https://deno.land/std@0.92.0/http/server.ts";
-const s = serve({ port: 8000 });
-console.log("http://localhost:8000/");
-for await (const req of s) {
-  req.respond({ body: "ドメイン取ったどー\n" });
+function handleRequest(request: Request) {
+  const pathname: URL = new URL(request.url);
+  const value: string | undefined = Deno.env.get("FOO");
+  const txt = ` これは俺のドメインや!\n path : ${pathname}\n value:${value}\n`;
+  return new Response(txt, {
+    headers: { "content-type": "text/plain" },
+  });
 }
+
+addEventListener("fetch", (event: any) => {
+  event.respondWith(handleRequest(event.request));
+});
